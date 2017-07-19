@@ -102,6 +102,7 @@ protected:
   }
 
   virtual void visit(const Var *op) {
+    cerr << "In FindVars, encountered " << op->name << " with ptr " << op << endl;
     if (varMap.count(op) == 0) {
       varMap[op] = CodeGen_C::genUniqueName(op->name);
       if (!inVarAssignLHSWithDecl) {
@@ -467,11 +468,15 @@ string printFuncName(const Function *func) {
 
 
 string CodeGen_C::genUniqueName(string name) {
+  cerr << "Generating a unique name for " << name << endl;
   stringstream os;
   os << name;
   if (uniqueNameCounters.count(name) > 0) {
-    os << uniqueNameCounters[name]++;
+    cerr << "-- already encountered " << name << ", so appending counter\n";
+    os << uniqueNameCounters[name];
+    uniqueNameCounters[name] += 1;
   } else {
+    cerr << "-- first time encountering " << name << endl;
     uniqueNameCounters[name] = 0;
   }
   return os.str();
